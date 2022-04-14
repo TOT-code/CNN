@@ -11,55 +11,33 @@ import torch.utils.data.distributed
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 
-"""
-class XJL(nn.Module):
-    def __init__(self):
-        super(XJL, self).__init__()
-        self.model1 = Sequential(
-            Conv2d(3, 32, (5, 5), padding=2),
-            MaxPool2d(2),
-            Conv2d(32, 32, (5, 5), padding=2),
-            MaxPool2d(2),
-            Conv2d(32, 64, (5, 5), padding=2),
-            MaxPool2d(2),
-            Flatten(),
-            Linear(1024, 64),
-            Dropout(p=0.5),
-            Linear(64, 3),
-            ReLU()
-        )
-
-    def forward(self, x):
-        x = self.model1(x)
-        return x
-
-"""
 # syntax 2  会根据设备情况自动选择cpu或者gpu
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # 准备数据集
 # BATCH_SIZE = 4
-BATCH_SIZE = 1
+BATCH_SIZE = 16
 use_gpu = torch.cuda.is_available()
 transform_train = transforms.Compose([
     transforms.Resize([120, 60]),
     # transforms.Resize([40, 40]),
     # transforms.CenterCrop(32),
     transforms.ToTensor(),
-    # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # 归一化处理
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # 归一化处理
 ])
 transform_test = transforms.Compose([
     transforms.Resize([120, 60]),
     # transforms.Resize([40, 40]),
     # transforms.CenterCrop(32),
     transforms.ToTensor(),
-    # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # 归一化处理
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # 归一化处理
 ])
 
 # 读取数据
-dataset_train = datasets.ImageFolder(r'C:\Users\dell\Desktop\xjl\2D_Data\train', transform_train)
-dataset_test_1 = datasets.ImageFolder(r'C:\Users\dell\Desktop\xjl\2D_Data\Small_data\train', transform_test)
-dataset_test_2 = datasets.ImageFolder(r'C:\Users\dell\Desktop\xjl\2D_Data\Small_data\test', transform_test)
-dataset_test = dataset_test_1 + dataset_test_2
+dataset_train = datasets.ImageFolder('/content/CNN/data/train', transform_train)
+dataset_test_1 = datasets.ImageFolder('/content/CNN/data/Small_data/test', transform_test)
+dataset_test_2 = datasets.ImageFolder('/content/CNN/data/Small_data/train', transform_test)
+dataset_test_3 = datasets.ImageFolder('/content/CNN/data/test', transform_test)
+dataset_test = dataset_test_1 + dataset_test_2+dataset_test_3
 # 获取数据集长度
 dataset_train_size = len(dataset_train)
 dataset_test_size = len(dataset_test)
