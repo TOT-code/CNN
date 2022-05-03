@@ -1,5 +1,5 @@
 # 网络模型，数据，损失函数+cuda
-
+# Vgg16
 import datetime
 
 import torchvision
@@ -33,11 +33,8 @@ transform_test = transforms.Compose([
 ])
 
 # 读取数据
-dataset_train = datasets.ImageFolder('/content/CNN/data/train', transform_train)
-dataset_test_1 = datasets.ImageFolder('/content/CNN/data/Small_data/test', transform_test)
-dataset_test_2 = datasets.ImageFolder('/content/CNN/data/Small_data/train', transform_test)
-dataset_test_3 = datasets.ImageFolder('/content/CNN/data/test', transform_test)
-dataset_test = dataset_test_1 + dataset_test_2+dataset_test_3
+dataset_train = datasets.ImageFolder('/content/CNN/data/train_set', transform_train)
+dataset_test = datasets.ImageFolder('/content/CNN/data/test_set', transform_test)
 # 获取数据集长度
 dataset_train_size = len(dataset_train)
 dataset_test_size = len(dataset_test)
@@ -63,7 +60,7 @@ xjl_nn.classifier= torch.nn.Sequential(
 xjl_nn.add_module('add_linear', nn.Linear(1000, 96))
 xjl_nn.add_module('add_linear', nn.Linear(96, 3))
 xjl_nn = xjl_nn.cuda()
-print(xjl_nn)
+# print(xjl_nn)
 # 损失函数
 loss = nn.CrossEntropyLoss().cuda()
 
@@ -77,9 +74,10 @@ total_train_step = 0
 # 记录测试次数
 total_test_step = 0
 # 训练的轮数
-epoch = 100
+epoch = 40
 # 添加tensorboard
 log_dir = "logs_fit_" + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+log_dir = "logs/"+ log_dir
 writer = SummaryWriter(log_dir)
 
 for i in range(epoch):
@@ -123,7 +121,7 @@ for i in range(epoch):
     writer.add_scalar("test_loss", total_test_loss, total_test_step)
     writer.add_scalar("test_accuracy", total_accuracy / dataset_test_size, total_test_step)
     total_test_step = total_test_step + 1
-    if i == epoch - 1:
+    if i%10 == 0 or i == epoch-1:
         torch.save(xjl_nn, "xjl_nn_{}.pth".format(i))
     print("模型已保存")
 
